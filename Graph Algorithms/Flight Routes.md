@@ -1,4 +1,4 @@
-### [Counting Rooms](https://cses.fi/problemset/task/1192/)
+### [Flight Routes](https://cses.fi/problemset/task/1196/)
 
 ```cpp
 #include <bits/stdc++.h>
@@ -9,7 +9,7 @@ using namespace __gnu_pbds;
 using namespace std;
 #define tezi           ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 #define ordered_set    tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-//#define int            long long
+#define int            long long
 #define fo(i,n)        for(int i=0;i<n;i++)
 #define fo1(i, n)      for (int i = 1; i < n; i++)
 #define endl           "\n"
@@ -23,35 +23,36 @@ using namespace std;
 #define sz(v)          v.size()
 #define pii            pair<int, int>
 
-int n,  m, y, e, t, k, len, u1, u2,  w, v, d;
-const int mx = 300005, mod = 1000000007, mx2 = 1000005 , mx3 = 100005, INF = 1e9;
-vector<vector<char>> store(1005, vector<char> (1005, 0));
-vector<vector<int>> visited(1000, vector<int> (1000, 0));
-vector<array<int, 2>> mov = {{ -1, 0}, {0, 1}, {1, 0}, {0, -1}};
+int n,  m, y, e, t, k, len, u1, u2,  w, v;
+const int mx = 300005, mod = 1000000007, mx2 = 200005 , mx3 = 100000, INF = 1e15;
+vector< pair<int, int> > adj[mx2];
 
-void dfs(int i, int j) {
-    visited[i][j] = 1;
-    for (auto it : mov) {
-        int nx = i + it[0], ny = j + it[1];
-        if (nx >= 0 && nx < n && ny >= 0 && ny < m && store[i][j] == '.' && visited[nx][ny] == 0) {
-            dfs(nx, ny);
-        }
-    }
-    return;
-}
-
-void count_rooms() {
-    //for (auto it : mov) cout << it[0] << " " << it[1] << endl;
-    int rooms = 0;
-    fo(i, n) {
-        fo(j, m) {
-            if (visited[i][j] == 0 && store[i][j] == '.') {
-                dfs(i, j);
-                rooms++;
+void dijkstra_k_shortest() {
+    vector<vector<int>> dist(mx2, vector<int>(k, INF));
+    priority_queue <
+    pair<int, int>,
+         vector<pair<int, int>>,
+         greater<pair<int, int>>
+         > q;
+    q.push({0, 1});
+    dist[1][0] = 0;
+    while (!q.empty()) {
+        u1 = q.top().se;
+        int d = q.top().fi;
+        q.pop();
+        if (d > dist[u1][k - 1]) continue;
+        for (auto it : adj[u1]) {
+            u2 = it.fi;
+            w = it.se;
+            if (dist[u2][k - 1] > (d + w)) {
+                dist[u2][k - 1] = (d + w);
+                q.push({dist[u2][k - 1], u2});
+                sort(all(dist[u2]));
             }
         }
     }
-    cout << rooms << endl;
+    fo(i, k) cout << dist[n][i] << " "; cout << endl;
+    return;
 }
 
 signed main()
@@ -62,9 +63,12 @@ signed main()
     // for getting input from output.txt
     freopen("output.txt", "w", stdout);
 # endif
-    cin >> n >> m;
-    fo(i, n) fo(j, m) cin >> store[i][j];
-    count_rooms();
+    cin >> n >> m >> k;
+    fo(i, m) {
+        cin >> u1 >> u2 >> w;
+        adj[u1].pb({u2, w});
+    }
+    dijkstra_k_shortest();
     return 0;
 }
 /*

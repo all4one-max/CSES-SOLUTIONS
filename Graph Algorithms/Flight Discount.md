@@ -1,4 +1,4 @@
-### [Counting Rooms](https://cses.fi/problemset/task/1192/)
+### [Flight Discount](https://cses.fi/problemset/task/1195/)
 
 ```cpp
 #include <bits/stdc++.h>
@@ -9,7 +9,7 @@ using namespace __gnu_pbds;
 using namespace std;
 #define tezi           ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 #define ordered_set    tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-//#define int            long long
+#define int            long long
 #define fo(i,n)        for(int i=0;i<n;i++)
 #define fo1(i, n)      for (int i = 1; i < n; i++)
 #define endl           "\n"
@@ -24,34 +24,27 @@ using namespace std;
 #define pii            pair<int, int>
 
 int n,  m, y, e, t, k, len, u1, u2,  w, v, d;
-const int mx = 300005, mod = 1000000007, mx2 = 1000005 , mx3 = 100005, INF = 1e9;
-vector<vector<char>> store(1005, vector<char> (1005, 0));
-vector<vector<int>> visited(1000, vector<int> (1000, 0));
-vector<array<int, 2>> mov = {{ -1, 0}, {0, 1}, {1, 0}, {0, -1}};
+const int mx = 300005, mod = 1000000007, mx2 = 1000005 , mx3 = 200005, INF = 1e15;
+vector<array<int, 3>> edges(mx3, { -1, -1, -1});
 
-void dfs(int i, int j) {
-    visited[i][j] = 1;
-    for (auto it : mov) {
-        int nx = i + it[0], ny = j + it[1];
-        if (nx >= 0 && nx < n && ny >= 0 && ny < m && store[i][j] == '.' && visited[nx][ny] == 0) {
-            dfs(nx, ny);
-        }
-    }
-    return;
-}
-
-void count_rooms() {
-    //for (auto it : mov) cout << it[0] << " " << it[1] << endl;
-    int rooms = 0;
-    fo(i, n) {
-        fo(j, m) {
-            if (visited[i][j] == 0 && store[i][j] == '.') {
-                dfs(i, j);
-                rooms++;
+void dijkstra(int source, vector<int> &dist, vector<pii> adj[]) {
+    set<pair<int, int>> q;
+    q.insert({0, source});
+    dist[source] = 0;
+    while (!q.empty()) {
+        u1 = q.begin()->se;
+        q.erase(q.begin());
+        for (auto it : adj[u1]) {
+            u2 = it.fi;
+            w = it.se;
+            if (dist[u2] > (dist[u1] + w)) {
+                q.erase({dist[u2], u2});
+                dist[u2] = (dist[u1] + w);
+                q.insert({dist[u2], u2});
             }
         }
     }
-    cout << rooms << endl;
+    return;
 }
 
 signed main()
@@ -63,8 +56,24 @@ signed main()
     freopen("output.txt", "w", stdout);
 # endif
     cin >> n >> m;
-    fo(i, n) fo(j, m) cin >> store[i][j];
-    count_rooms();
+    vector<pii> adj[mx3];
+    vector<pii> adjR[mx3];
+    fo(i, m) {
+        cin >> u1 >> u2 >> w;
+        edges[i] = {u1, u2, w};
+        adj[u1].pb({u2, w});
+        adjR[u2].pb({u1, w});
+    }
+    vector<int> dist1(mx3, INF);
+    vector<int> distn(mx3, INF);
+    dijkstra(1, dist1, adj);
+    dijkstra(n, distn, adjR);
+    int ans = INF;
+    fo(i, m) {
+        int src = edges[i][0], dest = edges[i][1], w = edges[i][2];
+        ans = min(ans, dist1[src] + distn[dest] + w / 2);
+    }
+    cout << ans << endl;
     return 0;
 }
 /*
@@ -74,6 +83,6 @@ signed main()
  #######   #     #  # ####   # #     #
        #  # #   #  # #   #  # # #   #
       #  ####  #  # ####   ####  # #
-######  #   # #### #    # #   #   #
+######  #   # #### #    # #   #   #w
 */
 ```

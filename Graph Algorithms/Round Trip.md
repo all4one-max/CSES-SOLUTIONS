@@ -1,4 +1,4 @@
-### [Counting Rooms](https://cses.fi/problemset/task/1192/)
+### [Round Trip](https://cses.fi/problemset/task/1669/)
 
 ```cpp
 #include <bits/stdc++.h>
@@ -9,7 +9,7 @@ using namespace __gnu_pbds;
 using namespace std;
 #define tezi           ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 #define ordered_set    tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-//#define int            long long
+#define int            long long
 #define fo(i,n)        for(int i=0;i<n;i++)
 #define fo1(i, n)      for (int i = 1; i < n; i++)
 #define endl           "\n"
@@ -25,33 +25,25 @@ using namespace std;
 
 int n,  m, y, e, t, k, len, u1, u2,  w, v, d;
 const int mx = 300005, mod = 1000000007, mx2 = 1000005 , mx3 = 100005, INF = 1e9;
-vector<vector<char>> store(1005, vector<char> (1005, 0));
-vector<vector<int>> visited(1000, vector<int> (1000, 0));
-vector<array<int, 2>> mov = {{ -1, 0}, {0, 1}, {1, 0}, {0, -1}};
+vector<int> adj[mx3];
+vector<int> visited(mx3, 0);
+vector<int> parent(mx3, -1);
 
-void dfs(int i, int j) {
-    visited[i][j] = 1;
-    for (auto it : mov) {
-        int nx = i + it[0], ny = j + it[1];
-        if (nx >= 0 && nx < n && ny >= 0 && ny < m && store[i][j] == '.' && visited[nx][ny] == 0) {
-            dfs(nx, ny);
+vector<int> dfs(int v, int p) {
+    visited[v] = 1;
+    for (auto it : adj[v]) {
+        if (visited[it] == 0) {
+            parent[it] = v;
+            vector<int> rec = dfs(it, v);
+            if (rec[0] != -1) return rec;
         }
-    }
-    return;
-}
-
-void count_rooms() {
-    //for (auto it : mov) cout << it[0] << " " << it[1] << endl;
-    int rooms = 0;
-    fo(i, n) {
-        fo(j, m) {
-            if (visited[i][j] == 0 && store[i][j] == '.') {
-                dfs(i, j);
-                rooms++;
+        else {
+            if (p != it) {
+                return {v, it};
             }
         }
     }
-    cout << rooms << endl;
+    return { -1, -1};
 }
 
 signed main()
@@ -63,8 +55,34 @@ signed main()
     freopen("output.txt", "w", stdout);
 # endif
     cin >> n >> m;
-    fo(i, n) fo(j, m) cin >> store[i][j];
-    count_rooms();
+    fo(i, m) {
+        cin >> u1 >> u2;
+        adj[u1].pb(u2);
+        adj[u2].pb(u1);
+    }
+    // basically it's asking us to detect cycle
+    bool not_found = true;
+    fo1(i, n + 1) {
+        if (visited[i] == 0) {
+            vector<int> rec = dfs(i, -1);
+            if (rec[0] != -1) {
+                int start = rec[0], end = rec[1], cur = start;
+                vector<int> ans;
+                while (cur != end) {
+                    ans.pb(cur);
+                    cur = parent[cur];
+                }
+                ans.pb(end);
+                ans.pb(start);
+                cout << sz(ans) << endl;
+                for (auto it : ans) cout << it << " ";
+                cout << endl;
+                not_found = false;
+                break;
+            }
+        }
+    }
+    if (not_found) cout << "IMPOSSIBLE" << endl;
     return 0;
 }
 /*
