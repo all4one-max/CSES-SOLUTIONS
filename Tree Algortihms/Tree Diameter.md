@@ -1,4 +1,4 @@
-### [Tree Diameter](https://cses.fi/problemset/task/1130/)
+### [Tree Diameter](https://cses.fi/problemset/task/1131/)
 
 ```cpp
 #include <bits/stdc++.h>
