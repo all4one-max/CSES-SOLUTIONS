@@ -1,4 +1,4 @@
-### [Static Range Minimum Queries](https://cses.fi/problemset/task/1647/)
+### [Dynamic Range Minimum Queries](https://cses.fi/problemset/task/1649/)
 
 ```cpp
 // solved using square root decomposition
@@ -58,14 +58,32 @@ int queries(int l, int r) {
     return ans;
 }
 
+void update(int pos, int val) {
+    int sq = floor(sqrt(n));
+    a[pos] = val;
+    blocks[pos / sq] = val;
+    int l = (pos / sq) * sq;
+    for (int i = l; i < (l + sq); i++) {
+        blocks[pos / sq] = min(blocks[pos / sq], a[i]);
+    }
+    return;
+}
+
 void solve() {
     cin >> n >> q;
     fo(i, n) cin >> a[i];
     pre_process();
     fo(i, q) {
-        cin >> u1 >> u2;
-        u1--; u2--;
-        cout << queries(u1, u2) << endl;
+        cin >> x >> u1 >> u2;
+
+        if (x == 1) {
+            u1--;
+            update(u1, u2);
+        }
+        else {
+            u1--; u2--;
+            cout << queries(u1, u2) << endl;
+        }
     }
     return;
 }

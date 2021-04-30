@@ -1,4 +1,4 @@
-### [Static Range Minimum Queries](https://cses.fi/problemset/task/1647/)
+### [Dynamic Range Sum Queries](https://cses.fi/problemset/task/1648/)
 
 ```cpp
 // solved using square root decomposition
@@ -28,34 +28,40 @@ using namespace std;
 int n,  m, y, e, t, q, u1, u2,  w, v, c, d, x, timer = 1;;
 const int mx = 400005, mod = 1000000007, mx2 = 200005 , mx3 = 2000005, INF = 1000000000000000000;
 vector<int> a(mx2, 0);
-vector<int> blocks(mx2, INF);
+vector<int> blocks(mx2, 0);
 
 void pre_process() {
     int sq = floor(sqrt(n));
     int cur_blk = -1;
     fo(i, n) {
         if (i % sq == 0) cur_blk++;
-        blocks[cur_blk] = min(blocks[cur_blk], a[i]);
+        blocks[cur_blk] += a[i];
     }
     return;
 }
 
 int queries(int l, int r) {
     int sq = floor(sqrt(n));
-    int ans = INF;
+    int ans = 0;
     while (l % sq != 0 && l < r) {
-        ans = min(ans, a[l]);
+        ans += a[l];
         l++;
     }
     while (l + sq - 1 <= r) {
-        ans = min(ans, blocks[l / sq]);
+        ans += blocks[l / sq];
         l += sq;
     }
     while (l <= r) {
-        ans = min(ans, a[l]);
+        ans += a[l];
         l++;
     }
     return ans;
+}
+
+void update(int pos, int val) {
+    int sq = floor(sqrt(n));
+    blocks[pos / sq] += (val - a[pos]);
+    a[pos] = val;
 }
 
 void solve() {
@@ -63,9 +69,16 @@ void solve() {
     fo(i, n) cin >> a[i];
     pre_process();
     fo(i, q) {
-        cin >> u1 >> u2;
-        u1--; u2--;
-        cout << queries(u1, u2) << endl;
+        cin >> x >> u1 >> u2;
+
+        if (x == 1) {
+            u1--;
+            update(u1, u2);
+        }
+        else {
+            u1--; u2--;
+            cout << queries(u1, u2) << endl;
+        }
     }
     return;
 }
