@@ -26,32 +26,31 @@ using namespace std;
 
 int n,  m, y, e, t, q, u1, u2,  w, v, c, d, x, timer = 1;;
 const int mx = 800005, mod = 1000000007, mx2 = 200005 , mx3 = 2000005, INF = 1000000000000000000;
-vector<array<int, 2>> tre(mx, {0, 0});
+vector<int> tre(mx, 0);
 vector<int> a(mx2, 0);
 vector<int> present(mx2, 1);
 
 void buildTree(int tl, int tr, int treeNode) {
-    if (tl == tr) {tre[treeNode][0] = present[tl]; tre[treeNode][1] = present[tl]; return;}
+    if (tl == tr) {tre[treeNode] = present[tl]; return;}
     int tm = (tl + tr) / 2;
     buildTree(tl, tm, 2 * treeNode);
     buildTree((tm + 1), tr, 2 * treeNode + 1);
-    tre[treeNode][0] = tre[2 * treeNode][0] + tre[2 * treeNode + 1][0];
-    tre[treeNode][1] = tre[2 * treeNode][1] + tre[2 * treeNode + 1][1];
+    tre[treeNode] = tre[2 * treeNode] + tre[2 * treeNode + 1];
     return;
 }
 
-int updateTree(int tl, int tr, int treeNode, int idx, int value) {
+int updateTree(int tl, int tr, int treeNode, int value) {
     if (tl == tr) {
-        tre[treeNode][0] = 0;
-        return a[idx];
+        tre[treeNode] = 0;
+        return a[tl];
     }
     int tm = (tl + tr) / 2;
     int ans;
-    if (value > tre[2 * treeNode][0]) {
-        ans = updateTree(tm + 1, tr, 2 * treeNode + 1, idx + tre[2 * treeNode][1], value - tre[2 * treeNode][0]);
+    if (value > tre[2 * treeNode]) {
+        ans = updateTree(tm + 1, tr, 2 * treeNode + 1, value - tre[2 * treeNode]);
     }
-    else ans = updateTree(tl, tm, 2 * treeNode, idx, value);
-    tre[treeNode][0] = tre[2 * treeNode][0] + tre[2 * treeNode + 1][0];
+    else ans = updateTree(tl, tm, 2 * treeNode, value);
+    tre[treeNode] = tre[2 * treeNode] + tre[2 * treeNode + 1];
     return ans;
 }
 
@@ -61,7 +60,7 @@ void solve() {
     buildTree(0, n - 1, 1);
     fo(i, n) {
         cin >> x;
-        cout << updateTree(0, n - 1, 1, 0, x) << " ";
+        cout << updateTree(0, n - 1, 1, x) << " ";
     }
     cout << endl;
     return;
