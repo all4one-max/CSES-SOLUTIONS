@@ -1,4 +1,4 @@
-### [Distinct Value Queries](https://cses.fi/problemset/task/1734/)
+### [Distinct Colors](https://cses.fi/problemset/task/1734/)
 
 ```cpp
 #include <bits/stdc++.h>
