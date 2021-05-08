@@ -108,8 +108,8 @@ void solve() {
         queries.pb({u1, u2, i, u1 / block_size});
     }
     sort(all(queries), comp);
-    int cur_l = 1;
-    int cur_r = 0;
+    int cur_l = 0;
+    int cur_r = -1;
     for (auto q : queries) {
         while (cur_l > q.l) {
             cur_l--;
