@@ -33,62 +33,55 @@ vector<int> num_vertex(mx2, 1);
 vector<int> ans(mx2, 0);
 
 void dfs(int v, int p) {
-    for (auto it : adj[v]) {
-        if (it != p) {
-            dfs(it, v);
-            sums[v] += (sums[it] + num_vertex[it]);
-            num_vertex[v] += num_vertex[it];
-        }
+  for (auto it : adj[v]) {
+    if (it != p) {
+      dfs(it, v);
+      sums[v] += (sums[it] + num_vertex[it]);
+      num_vertex[v] += num_vertex[it];
     }
-    return;
+  }
+  return;
 }
 
 void helper(int v, int p, int par_ans) {
-    ans[v] += (sums[v] + par_ans);
-    int num_parent_vertex = (n - num_vertex[v]);
-    int vl = (par_ans + num_parent_vertex), tot_vertex = 1;
-    for (auto it : adj[v]) {
-        if (it != p) {
-            vl += (sums[it] + num_vertex[it]);
-            tot_vertex += num_vertex[it];
-        }
+  int num_parent_vertex = (n - num_vertex[v]);
+  ans[v] = (sums[v] + par_ans + num_parent_vertex);
+  int vl = (sums[v] + par_ans + num_parent_vertex), tot_vertex = num_vertex[v];
+
+  for (auto it : adj[v]) {
+    if (it != p) {
+      vl -= (sums[it] + num_vertex[it]);
+      helper(it, v, vl);
+      vl += (sums[it] + num_vertex[it]);
     }
-    for (auto it : adj[v]) {
-        if (it != p) {
-            tot_vertex -= num_vertex[it];
-            vl -= (sums[it] + num_vertex[it]);
-            helper(it, v, vl + tot_vertex);
-            vl += (sums[it] + num_vertex[it]);
-            tot_vertex += num_vertex[it];
-        }
-    }
-    return;
+  }
+  return;
 }
 
 void solve() {
-    cin >> n;
-    fo(i, n - 1) {
-        cin >> u1 >> u2;
-        adj[u1].pb(u2);
-        adj[u2].pb(u1);
-    }
-    dfs(1, -1);
-    helper(1, -1, 0);
-    fo1(i, n + 1) cout << ans[i] << " "; cout << endl;
-    return;
+  cin >> n;
+  fo(i, n - 1) {
+    cin >> u1 >> u2;
+    adj[u1].pb(u2);
+    adj[u2].pb(u1);
+  }
+  dfs(1, -1);
+  helper(1, -1, 0);
+  fo1(i, n + 1) cout << ans[i] << " "; cout << endl;
+  return;
 }
 
 signed main()
-{   tezi
+{ tezi
 # ifndef ONLINE_JUDGE
-    // for getting input from input.txt
-    freopen("input.txt", "r", stdin);
-    // for getting input from output.txt
-    freopen("output.txt", "w", stdout);
+  // for getting input from input.txt
+  freopen("input.txt", "r", stdin);
+  // for getting input from output.txt
+  freopen("output.txt", "w", stdout);
 # endif
-    t = 1;
-    fo(i, t) solve();
-    return 0;
+  t = 1;
+  fo(i, t) solve();
+  return 0;
 }
 /*
     #######
