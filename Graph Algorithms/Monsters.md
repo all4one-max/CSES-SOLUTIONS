@@ -36,7 +36,6 @@ void bfs() {
     if (q.empty()) return;
     auto it = q.front();
     int x = it.fi, y = it.se;
-    vector<vector<int>> visited(1001, vector<int>(1001, 0));
     visited[x][y] = 1;
     vector<vector<int>> dist(1001, vector<int>(1001, 0));
     while (!q.empty()) {
@@ -83,13 +82,16 @@ signed main()
                 if (store[i][j] == 'M') {
                     q.push({i, j});
                     visited[i][j] = 1;
+                    distanc[i][j] = 0;
                 }
                 else if (store[i][j] == 'A') {x = i, y = j;}
             }
         }
         auto it = q.front();
         bfs();
-        vector<vector<int>> visited(1001, vector<int>(1001, 0));
+        fo(i, 1001) {
+            fo(j, 1001) visited[i][j] = 0;
+        }
         visited[x][y] = 1;
         queue<pii> q;
         vector<vector<int>> dist(1001, vector<int>(1001, 0));
